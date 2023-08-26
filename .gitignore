@@ -1,5 +1,13 @@
 # Virtual environmet folder
-.venv
+.venv/
 
 # Activate script
 activate.ps1
+
+.vscode/
+*.pyc
+__pycache__/
+
+# Enviroment variables
+.flaskenv
+.env
