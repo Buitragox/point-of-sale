@@ -1,0 +1,5 @@
+# Virtual environmet folder
+.venv
+
+# Activate script
+activate.ps1
