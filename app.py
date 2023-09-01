@@ -1,21 +1,25 @@
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 from flask import Flask, render_template
 from utils.db import db
 from sqlalchemy import text
 from models.product import Product
 
-from dotenv import load_dotenv
-
-load_dotenv()
+# Routes
+from routes.admin import admin
+from routes.seller import seller
 
 
 def create_app():
     app = Flask(__name__)
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DB_URI")
     db.init_app(app)
+    app.register_blueprint(admin, url_prefix="/admin")
+    app.register_blueprint(seller, url_prefix="/seller")
     
-    #app.config.from_pyfile('settings.py')
     @app.route('/test')
     def test():
         # Execute a raw SQL statement 
@@ -32,16 +36,11 @@ def create_app():
     def hello():
         return '<h1>Hello!!</h1>'
     
-    @app.route('/add_product')
-    def add_product():
-        prod = Product("Leche", 5, 15000)
-        db.session.add(prod)
-        db.session.commit()
-        return "creacion exitosa"
-    
     @app.route('/')
     def index():
-        return render_template("index.jinja")
+        admin = '/admin/login'
+        seller = '/seller/login'
+        return render_template("index.jinja", admin=admin, seller=seller)
 
     return app
 
