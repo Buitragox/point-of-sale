@@ -1,6 +1,6 @@
 {% extends "base.jinja" %}
 {% block title %}Add seller{% endblock%} 
-{% block content %}
+{% block body %}
 
 
     <h1>Crear vendedor</h1>
@@ -8,11 +8,13 @@
     <form action="/admin/add_seller" method="post">
 
         
-        <input type = "text" name="user" placeholder="Usuario a crear"></input>
-        <input type = "password" name="password" placeholder="Ingresa la contraseña"></input>
-        <input type = "password" name="pass_check" placeholder="Verifica la contraseña"></input>
+        <input type = "text" name="user" placeholder="Usuario a crear">
+        <input type = "password" name="password" placeholder="Ingresa la contraseña">
+        <input type = "password" name="pass_check" placeholder="Verifica la contraseña">
 
         <button>Crear</button>
     </form>
-    {{mensaje}}
+    {{message}}
+    <br/>
+    <h2><a href="/admin/">Regresar</a></h2>
 {% endblock %}

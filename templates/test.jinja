@@ -1,8 +1,13 @@
 {% extends "base.jinja" %} 
 {% block title %}Home{% endblock %} 
-{% block content %}
-hola
-    {% for i, name in roles %}
-        <h2>{{i}} {{name}}</h2>
+{% block body %}
+    {# {% if roles|length > 0 %} #}
+    {# {% if roles[0]|length == 4 %} #}
+
+    {% for data in rows %}
+        <h4>{{data}}</h4>
     {% endfor %}
-{% endblock %}
+
+    <h2><a href="/admin/">Regresar</a></h2>
+
+{% endblock %}  

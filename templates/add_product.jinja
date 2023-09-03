@@ -1,0 +1,38 @@
+{% extends "base.jinja" %}
+{% block title %}Add seller{% endblock%} 
+{% block body %}
+<div class="container">
+    <h1>Crear producto</h1>
+    <h3>Ingresar datos</h3>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <br />
+            {% for message in messages %}
+            <div class="alert alert-primary alert-dismissible" role="alert">
+                <strong>{{ message }}</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    <form action="/admin/add_product" method="post">
+        <div class="form-group col-auto">
+            <label for="name">Nombre del producto</label>
+            <input class="form-control" type="text" name="name" placeholder="Nombre del producto">  
+        </div>
+
+        <div class="form-group">
+            <label for="amount">Cantidad en inventario</label>
+            <input class="form-control" type="number" name="amount" placeholder="Cantidad en inventario" min="0"> 
+        </div>
+
+        <div class="form-group">
+            <label for="price">Precio</label>
+            <input class="form-control" type="number" name="price" placeholder="Precio" min="0"> 
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Crear</button>
+    </form>
+    <h2><a href="/admin/">Regresar</a></h2>
+</div>
+{% endblock %}
