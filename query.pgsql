@@ -1,1 +1,0 @@
-SELECT * FROM account.user_account;
