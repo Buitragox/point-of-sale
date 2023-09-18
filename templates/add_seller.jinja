@@ -1,20 +1,31 @@
 {% extends "base.jinja" %}
 {% block title %}Add seller{% endblock%} 
 {% block body %}
+    <div class = 'container'>
 
+        <h1>Crear vendedor</h1>
+        <h3>Ingresar datos</h3>
+        <form action="/admin/add_seller" method="post">
 
-    <h1>Crear vendedor</h1>
-    <h3>Ingresar datos</h3>
-    <form action="/admin/add_seller" method="post">
+            <div class="mb-3">
+                <label for="userName">Escribe el nombre de usuario</label>
+                <input type = "text" name="user" placeholder="Nombre de usuario" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label for="userPassword">Escribe la contraseña del usuario</label>
+                <input type = "password" name="password" placeholder="Ingresa la contraseña" class="form-control">
+            </div>
+            <div class="mb-3"> 
+                <label for="userName">Confirma la contraseña</label>
+                <input type = "password" name="pass_check" placeholder="Verifica la contraseña" class="form-control">
+            </div>
 
-        
-        <input type = "text" name="user" placeholder="Usuario a crear">
-        <input type = "password" name="password" placeholder="Ingresa la contraseña">
-        <input type = "password" name="pass_check" placeholder="Verifica la contraseña">
-
-        <button>Crear</button>
-    </form>
-    {{message}}
-    <br/>
-    <h2><a href="/admin/">Regresar</a></h2>
+            <div class="{{alert}}" role="alert">
+                {{message}}
+            </div>
+            <button class="btn btn-primary">Crear</button>
+        </form>
+        <br/>
+        <h2><a href="/admin/">Regresar</a></h2>
+    </div>
 {% endblock %}
