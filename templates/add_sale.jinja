@@ -1,0 +1,69 @@
+{% extends "base.jinja" %}
+{% block title %}Register sale{% endblock%} 
+{% block body %}
+
+    <script>
+        function addInputField() {
+            const inputFieldsContainer = document.getElementById("form_products");
+            const n = inputFieldsContainer.childElementCount;
+            const newInputField = document.createElement("div");
+            newInputField.innerHTML = `
+                <hr/>
+                <div class="form-group col-auto">
+                    <label for="name">ID</label>
+                    <input class="form-control" type="number" name="product_id[]" placeholder="ID del producto" min="1" required>  
+                </div>
+
+                <div class="form-group">
+                    <label for="amount">Cantidad</label>
+                    <input class="form-control" type="number" name="amount[]" placeholder="Cantidad a comprar" min="1" required> 
+                </div>
+
+                <button type="button" class="btn btn-danger" onclick="removeInputField(this)">Eliminar</button>
+            `;
+            inputFieldsContainer.appendChild(newInputField);
+        }
+
+        function removeInputField(button) {
+            const inputFieldContainer = button.parentElement;
+            inputFieldContainer.remove();
+        }
+        
+    </script>
+
+    <div class="container">
+    <h1>Crear producto</h1>
+    <h3>Ingresar datos</h3>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <br />
+            {% for message in messages %}
+            <div class="alert alert-primary alert-dismissible" role="alert">
+                <strong>{{ message }}</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form id="sale_form" action="/seller/process_sale" method="post">
+        <label for="client_id">ID del comprador</label>
+        <input class="form-control" type="text" name="client_id" placeholder="Identificación del comprador" required> 
+        
+        <br/>
+        <button type="button" class="btn btn-success" onclick="addInputField()">Agregar producto</button>
+        <button type="submit" class="btn btn-primary">Procesar venta</button>
+        <a role="button" class="btn btn-link" href="/seller/">Regresar</a>
+
+        <div id="form_products">
+            
+        </div>
+    </form>
+
+
+    
+</div>
+
+
+{% endblock %}
