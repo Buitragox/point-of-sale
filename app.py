@@ -1,5 +1,6 @@
 import os
 from dotenv import load_dotenv
+import hashlib
 
 load_dotenv()
 
@@ -59,19 +60,23 @@ def create_app():
             next_template = 'login.jinja' # return to login by default
             user = request.form['username']
             password = request.form['password']
+            md5Pass = hashlib.md5(password.encode()).hexdigest() 
 
-            query = text(f"SELECT * FROM account.user_account WHERE user_name='{user}' AND user_password='{password}'")
+            query = text(f"SELECT * FROM account.user_account WHERE user_name='{user}' AND user_password='{str(md5Pass)}'")
             result = db.session.execute(query).first()
-
+            
             # If user_name doesn't exist or password doesn't match
             if result is None: 
                 flash("Usuario y/o contrasena incorrectos")
 
-            elif result.user_password == password:
-                if result.user_role == 0: # Admin
-                    next_template = 'admin.jinja'
-                elif result.user_role == 1: # Seller
-                    next_template = 'seller.jinja'
+            elif result.user_password == md5Pass:
+                if result.user_state == 0:
+                    flash("Usuario deshabilitado")
+                else:
+                    if result.user_role == 0: # Admin
+                        next_template = 'admin.jinja'
+                    elif result.user_role == 1: # Seller
+                        next_template = 'seller.jinja'
 
             return render_template(next_template)
         else:   

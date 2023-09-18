@@ -1,0 +1,46 @@
+{% extends "base.jinja" %} 
+{% block title %}Home{% endblock %} 
+{% block body %}
+    {# {% if roles|length > 0 %} #}
+    {# {% if roles[0]|length == 4 %} #}
+<div class="">
+    <table class="table table-striped ">
+        <thead class="table-dark">
+            <tr>
+                <th scope="col">Nombre Usuario</th>
+                <th scope="col">Rol</th>
+                <th scope="col">Estado Cuenta</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+                <tr>
+                    <th scope="row">{{user.user_name}}</th>
+
+                    {% if user.user_role == 0 %}
+                    <th>Administrador</th>
+                    {% else %}
+                    <th>Vendedor</th>
+                    {% endif %}
+
+                    {% if user.user_state == 0 %}
+                    <th>Desactivada</th>
+                    {% else %}
+                    <th>Activada</th>
+                    {% endif %}
+
+                    <th>
+                        <a href="{{ url_for('admin.delete_user', id = user.user_id)}}">Activar / Desactivar</a>
+                        
+                    </th>
+                </tr>
+                
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+    <h2><a href="/admin/">Regresar</a></h2>
+
+{% endblock %}  
