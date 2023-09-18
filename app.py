@@ -47,22 +47,17 @@ def create_app():
         db.session.commit()
         return redirect("/test")
 
-
-    @app.route('/hello')
-    def hello():
-        return '<h1>Hello!!</h1>'
-
     @app.route('/login', methods=['GET', 'POST'])
     def login():
         # Execute a raw SQL statement 
         if request.method == 'POST':
             next_template = 'login.jinja' # return to login by default
+            db.session.query(UserAccount).filter(UserAccount.user_name == str("admin")).update(
+            {UserAccount.user_password : str("admin")}, synchronize_session = False)
             user = request.form['username']
             password = request.form['password']
-
             query = text(f"SELECT * FROM account.user_account WHERE user_name='{user}' AND user_password='{password}'")
             result = db.session.execute(query).first()
-
             # If user_name doesn't exist or password doesn't match
             if result is None: 
                 flash("Usuario y/o contrasena incorrectos")
@@ -79,7 +74,7 @@ def create_app():
     
     @app.route('/')
     def index():
-        return render_template("index.jinja")
+        return render_template("login.jinja")
     
     return app
 

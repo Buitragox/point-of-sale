@@ -1,0 +1,43 @@
+{% extends "base.jinja" %} 
+{% block title %}Search and Edit{% endblock %} 
+{% block body %}
+<div class="container">
+    <form action="/admin/edit" method="POST">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <br />
+                {% for message in messages %}
+                    <div class="alert alert-primary alert-dismissible" role="alert">
+                        <strong>{{ message }}</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <h1>Editar producto</h1>
+        <h3>Id</h3>
+        {% set x = rows[0]%}
+        <div class="form-floating">
+            <input type="text" class="form-control" id="id" name="id" placeholder="id" value = "{{rows[0]}}" readonly>
+        </div>
+        <h3>Nombre</h3>
+        <div class="form-floating">
+            <input type="text" class="form-control" id="name" name="name" placeholder="Nombre" value = "{{rows[1]}}" required>
+            <label for="name">{{rows[1]}}</label>
+        </div>
+        <h3>Cantidad</h3>
+        <div class="form-floating">
+            <input type="number" class="form-control" id="amount" name="amount" placeholder="Cantidad" value = "{{rows[2]}}" min="0" required>
+            <label for="amount">{{rows[2]}}</label>
+        </div>
+        <h3>Precio</h3>
+        <div class="form-floating">
+            <input type="number" class="form-control" id="price" name="price" placeholder="Precio" value = "{{rows[3]}}" min="0" required>
+            <label for="price">{{rows[3]}}</label>
+        </div>
+        <button class="btn-lg btn-primary" type="submit">Guardar</button>
+        <a href="/admin/search"> <button type="button" class="btn-lg btn-primary">Regresar</button></a>
+    </form>
+</div>
+
+{% endblock %}

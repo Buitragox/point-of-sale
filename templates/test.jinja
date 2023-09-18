@@ -3,11 +3,30 @@
 {% block body %}
     {# {% if roles|length > 0 %} #}
     {# {% if roles[0]|length == 4 %} #}
-
-    {% for data in rows %}
-        <h4>{{data}}</h4>
-    {% endfor %}
-
-    <h2><a href="/admin/">Regresar</a></h2>
+    <body>
+        <table class="table table-bordered content-center" style="width: 50%">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre del producto</th>
+                    <th>Cantidad en stock</th>
+                    <th>Precio por unidad</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for data in rows %}
+                    <tr>
+                        <td>{{data[0]}}</td>
+                        <td>{{data[1]}}</td>
+                        <td>{{data[2]}}</td>
+                        <td>{{data[3]}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </body>
+    <a href="/admin/">
+        <button type="button" class="btn btn-primary">Regresar</button>
+    </a>
 
 {% endblock %}  
