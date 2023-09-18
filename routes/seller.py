@@ -28,6 +28,7 @@ def process_sale():
     str_ids = request.form.getlist("product_id[]")
     str_amounts = request.form.getlist("amount[]")
     amounts: list[int] = []
+    ids: list[int] = []
     client_id = request.form.get("client_id")
 
     try:
@@ -46,20 +47,24 @@ def process_sale():
                 raise DataError("Las cantidades deben ser enteros positivos mayores a 0.")
             
             amounts.append(int(amount))
+            ids.append(int(product_id))
         
         # Get all products with the user provided IDs
         values = ','.join(str_ids)
         query = text(f'SELECT * FROM inventory.product WHERE product_id IN ({values})')
         result = db.session.execute(query).all()
+        set_ids = set([row.product_id for row in result])
 
         # If missing IDS, an invalid ID was inserted
-        if len(result) != len(str_ids):
-            for i in str_ids:
-                if i not in result:
+        if len(result) != len(ids):
+            for i in ids:
+                if i not in set_ids:
                     raise DataError(f"ID de producto invalido: {i}")
+                elif ids.count(i) > 1:
+                    raise DataError(f"ID de producto repetido: {i}")
 
         # tuple (id, amount)
-        form_data = list(map(lambda x: (int(x[0]), x[1]), list(zip(str_ids, amounts))))
+        form_data = list(zip(ids, amounts))
         form_data.sort(key=lambda x: x[0])
 
         # Calculate sale price and check for valid amount
