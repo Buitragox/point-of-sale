@@ -52,8 +52,6 @@ def create_app():
         # Execute a raw SQL statement 
         if request.method == 'POST':
             next_template = 'login.jinja' # return to login by default
-            db.session.query(UserAccount).filter(UserAccount.user_name == str("admin")).update(
-            {UserAccount.user_password : str("admin")}, synchronize_session = False)
             user = request.form['username']
             password = request.form['password']
             query = text(f"SELECT * FROM account.user_account WHERE user_name='{user}' AND user_password='{password}'")
