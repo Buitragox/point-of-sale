@@ -1,9 +1,10 @@
 import os
 from dotenv import load_dotenv
+import hashlib
 
 load_dotenv()
 
-from flask import Flask, render_template, request, redirect, flash
+from flask import Flask, render_template, request, redirect, flash, session
 from utils.db import db
 from sqlalchemy import text
 
@@ -30,12 +31,6 @@ def create_app():
     def test():
         # Execute a raw SQL statement 
         result = db.session.execute(text('SELECT * FROM account.user_account')).all()
-        #result = db.session.execute(text('SELECT * FROM account.role_account'))
-
-        # rows = []
-        
-        # for row in result:
-        #     rows.append(row)
 
         return render_template("test.jinja", rows=result)
     
@@ -51,20 +46,36 @@ def create_app():
     def login():
         # Execute a raw SQL statement 
         if request.method == 'POST':
+            #quit session
+            session.pop("user_name", None)
+            session.pop("user_role", None)
+            session.pop("user_id", None)
+
             next_template = 'login.jinja' # return to login by default
             user = request.form['username']
             password = request.form['password']
-            query = text(f"SELECT * FROM account.user_account WHERE user_name='{user}' AND user_password='{password}'")
+
+            md5Pass = hashlib.md5(password.encode()).hexdigest() 
+
+            query = text(f"SELECT * FROM account.user_account WHERE user_name='{user}' AND user_password='{str(md5Pass)}'")
+
             result = db.session.execute(query).first()
+            
             # If user_name doesn't exist or password doesn't match
             if result is None: 
                 flash("Usuario y/o contrasena incorrectos")
 
-            elif result.user_password == password:
-                if result.user_role == 0: # Admin
-                    next_template = 'admin.jinja'
-                elif result.user_role == 1: # Seller
-                    next_template = 'seller.jinja'
+            elif result.user_password == md5Pass:
+                if result.user_state == 0:
+                    flash("Usuario deshabilitado")
+                else:
+                    session["user_name"] = result.user_name
+                    session["user_role"] = result.user_role
+                    session["user_id"] = result.user_id
+                    if result.user_role == 0: # Admin
+                        next_template = 'admin.jinja'
+                    elif result.user_role == 1: # Seller
+                        next_template = 'seller.jinja'
 
             return render_template(next_template)
         else:   
