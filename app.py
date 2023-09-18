@@ -42,11 +42,6 @@ def create_app():
         db.session.commit()
         return redirect("/test")
 
-
-    @app.route('/hello')
-    def hello():
-        return '<h1>Hello!!</h1>'
-
     @app.route('/login', methods=['GET', 'POST'])
     def login():
         # Execute a raw SQL statement 
@@ -59,6 +54,7 @@ def create_app():
             next_template = 'login.jinja' # return to login by default
             user = request.form['username']
             password = request.form['password']
+
             md5Pass = hashlib.md5(password.encode()).hexdigest() 
 
             query = text(f"SELECT * FROM account.user_account WHERE user_name='{user}' AND user_password='{str(md5Pass)}'")
@@ -87,7 +83,7 @@ def create_app():
     
     @app.route('/')
     def index():
-        return render_template("index.jinja")
+        return render_template("login.jinja")
     
     return app
 
