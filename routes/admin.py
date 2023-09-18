@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask import Blueprint, render_template, request, flash, redirect, url_for, session
 from utils.db import db
 from models.product import Product
 from models.user import UserAccount
@@ -7,6 +7,10 @@ import hashlib
 
 admin = Blueprint("admin", __name__, static_folder="static", template_folder="templates")
 
+@admin.before_request
+def before_request():
+    if not "user_name" in session or session["user_role"] != 0:
+        return redirect(url_for("login"))
 
 @admin.route('/')
 def home():
