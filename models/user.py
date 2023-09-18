@@ -11,10 +11,9 @@ class UserAccount(db.Model):
     user_name = db.Column("user_name", Text)
     user_password = db.Column("user_password", Text)
     user_role = db.Column("user_role", Integer)
-    user_status = db.Column("user_state")
 
-    def __init__(self, user, password, role, status):
+    def __init__(self, user, password, role):
         self.user_name = user
         self.user_password = password
         self.user_role = role
-        self.user_status = status
+
