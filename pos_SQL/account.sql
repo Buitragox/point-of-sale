@@ -3,6 +3,9 @@ CREATE TABLE IF NOT EXISTS account.role_account(
     role_name TEXT NOT NULL
 );
 
+INSERT INTO account.role_account (role_id, role_name) VALUES (0, 'Administrador');
+INSERT INTO account.role_account (role_id, role_name) VALUES (1, 'Vendedor');
+
 CREATE TABLE IF NOT EXISTS account.user_account(
     user_id UUID PRIMARY KEY,
     user_name TEXT NOT NULL,

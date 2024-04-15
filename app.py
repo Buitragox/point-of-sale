@@ -37,7 +37,7 @@ def create_app():
     @app.route('/add_admin/<username>&<password>')
     def add_admin(username, password):
         # Execute a raw SQL statement 
-        prod = UserAccount(username, password, 0)
+        prod = UserAccount(username, password, 0, 1)
         db.session.add(prod)
         db.session.commit()
         return redirect("/test")
@@ -55,27 +55,25 @@ def create_app():
             user = request.form['username']
             password = request.form['password']
 
-            md5Pass = hashlib.md5(password.encode()).hexdigest() 
+            md5_pass = hashlib.md5(password.encode()).hexdigest()
 
-            query = text(f"SELECT * FROM account.user_account WHERE user_name='{user}' AND user_password='{str(md5Pass)}'")
+            query = text(f"SELECT * FROM account.user_account WHERE user_name='{user}' AND user_password='{str(md5_pass)}'")
 
             result = db.session.execute(query).first()
             
             # If user_name doesn't exist or password doesn't match
             if result is None: 
                 flash("Usuario y/o contrasena incorrectos")
-
-            elif result.user_password == md5Pass:
-                if result.user_state == 0:
-                    flash("Usuario deshabilitado")
-                else:
-                    session["user_name"] = result.user_name
-                    session["user_role"] = result.user_role
-                    session["user_id"] = result.user_id
-                    if result.user_role == 0: # Admin
-                        next_template = 'admin.jinja'
-                    elif result.user_role == 1: # Seller
-                        next_template = 'seller.jinja'
+            elif result.user_state == 0:
+                flash("Usuario deshabilitado")
+            else:
+                session["user_name"] = result.user_name
+                session["user_role"] = result.user_role
+                session["user_id"] = result.user_id
+                if result.user_role == 0: # Admin
+                    next_template = 'admin.jinja'
+                elif result.user_role == 1: # Seller
+                    next_template = 'seller.jinja'
 
             return render_template(next_template)
         else:   

@@ -117,9 +117,9 @@ def delete_user(id):
     result = db.session.execute(query).first()
     
     if result.user_state == 0:
-        db.session.query(UserAccount).filter(UserAccount.UUID_user == str(id)).update({UserAccount.user_status : '1'}, synchronize_session = False)
+        db.session.query(UserAccount).filter(UserAccount.UUID_user == str(id)).update({UserAccount.user_state : '1'}, synchronize_session = False)
     else:
-        db.session.query(UserAccount).filter(UserAccount.UUID_user == str(id)).update({UserAccount.user_status : '0 '}, synchronize_session = False)
+        db.session.query(UserAccount).filter(UserAccount.UUID_user == str(id)).update({UserAccount.user_state : '0 '}, synchronize_session = False)
     
     db.session.commit()
     '''
