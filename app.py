@@ -26,25 +26,25 @@ def create_app():
     db.init_app(app)
     app.register_blueprint(admin, url_prefix="/admin")
     app.register_blueprint(seller, url_prefix="/seller")
-    
+
     @app.route('/test')
     def test():
-        # Execute a raw SQL statement 
+        # Execute a raw SQL statement
         result = db.session.execute(text('SELECT * FROM account.user_account')).all()
 
         return render_template("test.jinja", rows=result)
-    
+
     @app.route('/add_admin/<username>&<password>')
     def add_admin(username, password):
-        # Execute a raw SQL statement 
-        prod = UserAccount(username, password, 0, 1)
+        # Execute a raw SQL statement
+        prod = UserAccount(username, hashlib.md5(password.encode()).hexdigest(), 0, 1)
         db.session.add(prod)
         db.session.commit()
         return redirect("/test")
 
     @app.route('/login', methods=['GET', 'POST'])
     def login():
-        # Execute a raw SQL statement 
+        # Execute a raw SQL statement
         if request.method == 'POST':
             #quit session
             session.pop("user_name", None)
@@ -60,9 +60,9 @@ def create_app():
             query = text(f"SELECT * FROM account.user_account WHERE user_name='{user}' AND user_password='{str(md5_pass)}'")
 
             result = db.session.execute(query).first()
-            
+
             # If user_name doesn't exist or password doesn't match
-            if result is None: 
+            if result is None:
                 flash("Usuario y/o contrasena incorrectos")
             elif result.user_state == 0:
                 flash("Usuario deshabilitado")
@@ -76,12 +76,11 @@ def create_app():
                     next_template = 'seller.jinja'
 
             return render_template(next_template)
-        else:   
+        else:
             return render_template('login.jinja')
-    
+
     @app.route('/')
     def index():
         return render_template("login.jinja")
-    
-    return app
 
+    return app
