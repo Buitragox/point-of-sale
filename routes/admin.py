@@ -3,7 +3,6 @@ from utils.db import db
 from models.product import Product
 from models.user import UserAccount
 from sqlalchemy import text, update
-import hashlib
 
 admin = Blueprint("admin", __name__, static_folder="static", template_folder="templates")
 
@@ -33,17 +32,18 @@ def add_product():
             flash("Parametros inválidos")
 
         return render_template("add_product.jinja")
-    else: 
+    else:
         return render_template("add_product.jinja")
 
 
 @admin.route('/list_products', methods=['GET'])
 def list_products():
-    query = text(f"SELECT * FROM inventory.product")
-    result = db.session.execute(query).all()
+    result = Product.query.all()
+    # query = text(f"SELECT * FROM inventory.product")
+    # result = db.session.execute(query).all()
     return render_template("test.jinja", rows=result)
 
-from models.product import Product
+
 @admin.route('/edit', methods = ['POST'])
 def edit():
     if request.method == 'POST':
@@ -69,20 +69,22 @@ def search_products():
             if value.isdigit():
                 query = text(f"SELECT * FROM inventory.product WHERE product_id='{int(value)}'")
                 result = db.session.execute(query).first()
-                if result is None: 
+                if result is None:
                     flash("No se encontró el producto.")
                     return render_template("search.jinja")
-                else: return render_template("edit.jinja", rows=result)
-            else: 
+                else:
+                    return render_template("edit.jinja", rows=result)
+            else:
                 flash("El ID es un valor numerico.")
                 return render_template("search.jinja")
         elif int(option) == 2:
                 query = text(f"SELECT * FROM inventory.product WHERE product_name='{str(value)}'")
                 result = db.session.execute(query).first()
-                if result is None: 
+                if result is None:
                     flash("No se encontró el producto.")
                     return render_template("search.jinja")
-                else: return render_template("edit.jinja", rows=result)
+                else:
+                    return render_template("edit.jinja", rows=result)
     else:
         return render_template("search.jinja")
 
@@ -91,50 +93,40 @@ def new_seller():
     if request.method == 'POST':
         user = request.form["user"]
         password = request.form['password']
-        passCheck = request.form['pass_check']
-        md5Pass = hashlib.md5(password.encode()).hexdigest() 
-        
-        
-        message = "¡¡¡La contraseña no coincide!!!"
+        pass_check = request.form['pass_check']
+
+        message = "La contraseña no coincide!"
         alert = "alert alert-danger"
-        
-        if password == passCheck:
-            newUser = UserAccount(user, str(md5Pass), 1, 1)
-            
+
+        if password == pass_check:
+            newUser = UserAccount(user, password, 1, 1)
+
             db.session.add(newUser)
             db.session.commit()
-            message = "¡¡¡Se registro correctamente!!!"
+            message = "Se registró correctamente!"
             alert = "alert alert-success"
 
-        return render_template("add_seller.jinja", message = message, alert = alert)
-    else: 
+        return render_template("add_seller.jinja", message=message, alert=alert)
+    else:
         return render_template("add_seller.jinja")
 
-@admin.route('/delete_user/<id>')
+@admin.route('/delete_user/<id>', methods=['GET'])
 def delete_user(id):
-    
-    query = text(f"SELECT * FROM account.user_account WHERE user_id='{id}' ")
-    result = db.session.execute(query).first()
-    
+    result = UserAccount.query.filter_by(user_id=id).first()
+
     if result.user_state == 0:
-        db.session.query(UserAccount).filter(UserAccount.UUID_user == str(id)).update({UserAccount.user_state : '1'}, synchronize_session = False)
+        db.session.execute(update(UserAccount).where(UserAccount.user_id == str(id)).values(user_state=1).execution_options(synchronize_session="auto"))
     else:
-        db.session.query(UserAccount).filter(UserAccount.UUID_user == str(id)).update({UserAccount.user_state : '0 '}, synchronize_session = False)
-    
+        db.session.execute(update(UserAccount).where(UserAccount.user_id == str(id)).values(user_state=0).execution_options(synchronize_session="auto"))
+
     db.session.commit()
-    '''
-    #print(query2)
-    #result = db.session.execute(query, parametros)
-    #print(result)
-    db.session.commit()
-    '''
+
     return redirect(url_for('admin.update_user'))
 
 
 
 @admin.route('/update_user', methods=['GET'])
 def update_user():
-    query = text(f"SELECT * FROM account.user_account")
-    users = db.session.execute(query).all()
+    users = UserAccount.query.all()
 
     return render_template('update_user.jinja', users = users)

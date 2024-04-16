@@ -1,12 +1,12 @@
 import os
 from dotenv import load_dotenv
-import hashlib
+from hashlib import md5
 
 load_dotenv()
 
 from flask import Flask, render_template, request, redirect, flash, session
 from utils.db import db
-from sqlalchemy import text
+from sqlalchemy import text, select
 
 # Models
 from models.product import Product
@@ -37,9 +37,10 @@ def create_app():
     @app.route('/add_admin/<username>&<password>')
     def add_admin(username, password):
         # Execute a raw SQL statement
-        prod = UserAccount(username, hashlib.md5(password.encode()).hexdigest(), 0, 1)
+        prod = UserAccount(username, password, 0, 1)
         db.session.add(prod)
         db.session.commit()
+        db.drop_all()
         return redirect("/test")
 
     @app.route('/login', methods=['GET', 'POST'])
@@ -55,14 +56,12 @@ def create_app():
             user = request.form['username']
             password = request.form['password']
 
-            md5_pass = hashlib.md5(password.encode()).hexdigest()
+            md5_pass = md5(password.encode()).hexdigest()
 
-            query = text(f"SELECT * FROM account.user_account WHERE user_name='{user}' AND user_password='{str(md5_pass)}'")
-
-            result = db.session.execute(query).first()
+            result = UserAccount.query.filter_by(user_name = user).first()
 
             # If user_name doesn't exist or password doesn't match
-            if result is None:
+            if result is None or result.user_password != md5_pass:
                 flash("Usuario y/o contrasena incorrectos")
             elif result.user_state == 0:
                 flash("Usuario deshabilitado")
