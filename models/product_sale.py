@@ -7,6 +7,6 @@ class ProductSale(db.Model):
     Column()
     __tablename__ = "product_sale"
     __table_args__ = { 'schema': 'sales' }
-    sale_id = Column("sale_id", UUID, ForeignKey("sales.sale.sale_id"), primary_key=True)
+    sale_id = Column("sale_id", UUID(as_uuid=True), ForeignKey("sales.sale.sale_id"), primary_key=True, default=uuid4)
     product_id = Column("product_id", Integer, ForeignKey("inventory.product.product_id"), primary_key=True)
     amount = Column("amount", Integer)
