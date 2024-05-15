@@ -11,3 +11,7 @@ __pycache__/
 # Enviroment variables
 .flaskenv
 .env
+
+geckodriver
+
+.coverage

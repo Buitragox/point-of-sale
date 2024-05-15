@@ -1,5 +1,5 @@
 {% extends "base.jinja" %}
-{% block title %}Register sale{% endblock%} 
+{% block title %}Register sale{% endblock%}
 {% block body %}
 
     <script>
@@ -11,12 +11,12 @@
                 <hr/>
                 <div class="form-group col-auto">
                     <label for="name">ID</label>
-                    <input class="form-control" type="number" name="product_id[]" placeholder="ID del producto" min="1" required>  
+                    <input id='id-${n}' class="form-control" type="number" name="product_id[]" placeholder="ID del producto" min="1" required>
                 </div>
 
                 <div class="form-group">
                     <label for="amount">Cantidad</label>
-                    <input class="form-control" type="number" name="amount[]" placeholder="Cantidad a comprar" min="1" required> 
+                    <input id='amount-${n}' class="form-control" type="number" name="amount[]" placeholder="Cantidad a comprar" min="1" required>
                 </div>
 
                 <button type="button" class="btn btn-danger" onclick="removeInputField(this)">Eliminar</button>
@@ -28,7 +28,7 @@
             const inputFieldContainer = button.parentElement;
             inputFieldContainer.remove();
         }
-        
+
     </script>
 
     <div class="container">
@@ -49,20 +49,20 @@
 
     <form id="sale_form" action="/seller/process_sale" method="post">
         <label for="client_id">ID del comprador</label>
-        <input class="form-control" type="text" name="client_id" placeholder="Identificación del comprador" required> 
-        
+        <input class="form-control" type="text" name="client_id" placeholder="Identificación del comprador" required>
+
         <br/>
-        <button type="button" class="btn btn-success" onclick="addInputField()">Agregar producto</button>
-        <button type="submit" class="btn btn-primary">Procesar venta</button>
+        <button id="add-button" type="button" class="btn btn-success" onclick="addInputField()">Agregar producto</button>
+        <button id="submit-sale" type="submit" class="btn btn-primary">Procesar venta</button>
         <a role="button" class="btn btn-link" href="/seller/">Regresar</a>
 
         <div id="form_products">
-            
+
         </div>
     </form>
 
 
-    
+
 </div>
 
 

@@ -7,6 +7,20 @@ from models.product_sale import ProductSale
 from sqlalchemy import text, delete
 import sqlalchemy
 from flask.testing import FlaskClient
+from selenium import webdriver
+import subprocess
+from time import sleep
+import random
+
+def pytest_addoption(parser):
+    parser.addoption("--random-order-seed", action="store", default=None, help="Set a seed for random test order")
+
+
+def pytest_collection_modifyitems(session, config, items):
+    seed = config.getoption("--random-order-seed")
+    if seed is not None:
+        random.seed(int(seed))
+    random.shuffle(items)
 
 
 def _create_all_schemas():
@@ -29,6 +43,7 @@ def _create_all_schemas():
 
         conn.commit()
 
+
 @pytest.fixture(scope='module')
 def client():
     # Set the Testing configuration prior to creating the Flask application
@@ -46,7 +61,7 @@ def client():
             _create_all_schemas()
             db.create_all()
             db.session.add_all([RoleAccount(0, 'Admin'), RoleAccount(1, 'Seller')])
-            db.session.add_all([UserAccount('admin', 'admin', 0, 1), UserAccount('seller', 'seller', 1, 1)])
+            db.session.add_all([UserAccount('admin', 'admin', 0, 1), UserAccount('seller', 'seller', 1, 1), UserAccount('tobedisabled', 'tobedisabled', 1, 1)])
             db.session.commit()
 
             yield testing_client  # this is where the testing happens!
@@ -70,28 +85,10 @@ def admin_client(client: FlaskClient):
         session.pop("user_id", None)
 
 @pytest.fixture(scope='module')
-def inv_client(admin_client: FlaskClient):
+def inv_client(client: FlaskClient):
     products = [Product('Papa', 20, 5000), Product('Arroz', 15, 10000), Product('Chicle', 120, 2000)]
-    db.session.add_all(products)
-    db.session.commit()
-
-    yield admin_client
-
-    for p in products:
-        db.session.delete(p)
-
-    db.session.commit()
-
-
-@pytest.fixture(scope='module')
-def seller_client(client: FlaskClient):
-    user = UserAccount.query.filter_by(user_name = "seller").first()
-    with client.session_transaction() as session:
-        session["user_name"] = user.user_name
-        session["user_role"] = user.user_role
-        session["user_id"] = user.user_id
-
-    products = [Product('Papa', 20, 5000), Product('Arroz', 15, 10000), Product('Chicle', 120, 2000)]
+    # db.session.expire_all()
+    # db.session.expunge_all()
     db.session.add_all(products)
     db.session.commit()
 
@@ -104,7 +101,39 @@ def seller_client(client: FlaskClient):
 
     db.session.commit()
 
+@pytest.fixture(scope='module')
+def admin_inv_client(admin_client: FlaskClient, inv_client):
+    yield admin_client
+
+
+@pytest.fixture(scope='module')
+def seller_client(client: FlaskClient, inv_client):
+    user = UserAccount.query.filter_by(user_name = "seller").first()
+    with client.session_transaction() as session:
+        session["user_name"] = user.user_name
+        session["user_role"] = user.user_role
+        session["user_id"] = user.user_id
+
+    yield client
+
     with client.session_transaction() as session:
         session.pop("user_name", None)
         session.pop("user_role", None)
         session.pop("user_id", None)
+
+@pytest.fixture(scope='module')
+def driver(inv_client):
+    process = subprocess.Popen(["flask", "run", "--port=5000"], env={**os.environ, "FLASK_ENV": "testing"})
+    sleep(5)  # Give the server time to start
+
+    options = webdriver.FirefoxOptions()
+    ff_driver = webdriver.Firefox(options=options)
+    ff_driver.implicitly_wait(5)
+
+    yield ff_driver
+
+    ff_driver.close()
+
+    # Stop the flask app
+    process.terminate()
+    process.wait()

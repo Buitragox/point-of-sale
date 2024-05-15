@@ -1,11 +1,11 @@
-{% extends "base.jinja" %} 
-{% block title %}login admin{% endblock %} 
+{% extends "base.jinja" %}
+{% block title %}Administrador{% endblock %}
 {% block body %}
     <!-- aqui el login del admin -->
-    
+
     <div class="container p-5">
         <div class="row">
-        
+
             <div class="col text-start">
                 <h1 >Soy Admin</h1>
             </div>
@@ -20,6 +20,6 @@
         <h2><a href="/admin/add_product" class="btn btn-primary btn-lg">Agregar producto</a></h2>
         <h2><a href="/admin/list_products" class="btn btn-primary btn-lg">Listar productos</a></h2>
         <h2><a href="/admin/search" class="btn btn-primary btn-lg">Buscar y editar productos</a></h2>
-        <h2><a href="/admin/update_user" class="btn btn-primary btn-lg">Modificar Usuarios</a></h2>
+        <h2><a href="/admin/update_user" class="btn btn-primary btn-lg">Modificar usuarios</a></h2>
     </div>
 {% endblock %}

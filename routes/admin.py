@@ -41,7 +41,7 @@ def list_products():
     result = Product.query.all()
     # query = text(f"SELECT * FROM inventory.product")
     # result = db.session.execute(query).all()
-    return render_template("test.jinja", rows=result)
+    return render_template("products.jinja", rows=result)
 
 
 @admin.route('/edit', methods = ['POST'])
@@ -91,7 +91,7 @@ def search_products():
 @admin.route('/add_seller', methods=['POST', 'GET'])
 def new_seller():
     if request.method == 'POST':
-        user = request.form["user"]
+        user = request.form["username"]
         password = request.form['password']
         pass_check = request.form['pass_check']
 

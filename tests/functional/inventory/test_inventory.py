@@ -17,24 +17,24 @@ def test_add_product_invalid_price(admin_client: FlaskClient):
     })
     assert bytes('Parametros inválidos', 'utf-8') in response.get_data()
 
-def test_search_products(inv_client: FlaskClient):
+def test_search_products(admin_inv_client: FlaskClient):
     prod : Product = Product.query.filter_by(product_name='Papa').first()
-    response = inv_client.post('/admin/search', data={
+    response = admin_inv_client.post('/admin/search', data={
         "value": prod.product_id,
         "option": 1,
     })
     assert b"Papa" in response.get_data()
 
-def test_search_products(inv_client: FlaskClient):
-    response = inv_client.post('/admin/search', data={
+def test_search_products(admin_inv_client: FlaskClient):
+    response = admin_inv_client.post('/admin/search', data={
         "value": 999999,
         "option": 1,
     })
     assert bytes("No se encontró el producto.", 'utf-8') in response.get_data()
 
-def test_edit_products(inv_client: FlaskClient):
+def test_edit_products(admin_inv_client: FlaskClient):
     prod : Product = Product.query.filter_by(product_name='Papa').first()
-    response = inv_client.post('/admin/edit', data={
+    response = admin_inv_client.post('/admin/edit', data={
         "id": prod.product_id,
         "name": "Papita genial",
         "amount": 300000,

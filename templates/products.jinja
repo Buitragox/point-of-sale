@@ -1,5 +1,5 @@
-{% extends "base.jinja" %} 
-{% block title %}Home{% endblock %} 
+{% extends "base.jinja" %}
+{% block title %}Products{% endblock %}
 {% block body %}
     {# {% if roles|length > 0 %} #}
     {# {% if roles[0]|length == 4 %} #}
@@ -16,10 +16,10 @@
             <tbody>
                 {% for data in rows %}
                     <tr>
-                        <td>{{data[0]}}</td>
-                        <td>{{data[1]}}</td>
-                        <td>{{data[2]}}</td>
-                        <td>{{data[3]}}</td>
+                        <td>{{data.product_id}}</td>
+                        <td>{{data.product_name}}</td>
+                        <td>{{data.product_amount}}</td>
+                        <td>{{data.product_price}}</td>
                     </tr>
                 {% endfor %}
             </tbody>
@@ -29,4 +29,4 @@
         <button type="button" class="btn btn-primary">Regresar</button>
     </a>
 
-{% endblock %}  
+{% endblock %}

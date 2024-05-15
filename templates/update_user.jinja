@@ -1,5 +1,5 @@
-{% extends "base.jinja" %} 
-{% block title %}Home{% endblock %} 
+{% extends "base.jinja" %}
+{% block title %}Modify users{% endblock %}
 {% block body %}
     {# {% if roles|length > 0 %} #}
     {# {% if roles[0]|length == 4 %} #}
@@ -16,26 +16,26 @@
         <tbody>
             {% for user in users %}
                 <tr>
-                    <th scope="row">{{user.user_name}}</th>
+                    <td scope="row">{{user.user_name}}</td>
 
                     {% if user.user_role == 0 %}
-                    <th>Administrador</th>
+                    <td>Administrador</td>
                     {% else %}
-                    <th>Vendedor</th>
+                    <td>Vendedor</td>
                     {% endif %}
 
                     {% if user.user_state == 0 %}
-                    <th>Desactivada</th>
+                    <td>Desactivada</td>
                     {% else %}
-                    <th>Activada</th>
+                    <td>Activada</td>
                     {% endif %}
 
-                    <th>
+                    <td>
                         <a href="{{ url_for('admin.delete_user', id = user.user_id)}}">Activar / Desactivar</a>
-                        
-                    </th>
+
+                    </td>
                 </tr>
-                
+
             {% endfor %}
         </tbody>
     </table>
@@ -43,4 +43,4 @@
 
     <h2><a href="/admin/">Regresar</a></h2>
 
-{% endblock %}  
+{% endblock %}
